@@ -1,0 +1,185 @@
+body{ 
+  background-color: #202020;
+}
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background-color: #202020;
+  font-family: Arial, sans-serif;
+  padding: 20px 0; /* Espacio superior e inferior */
+}
+
+.api-container2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  min-height: fit-content; /* Se ajusta al contenido */
+  padding: 20px;
+  border-radius: 30px;
+  background-color: transparent;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  border: 2px solid #3771a7;
+  box-shadow: 0 0 50px #3771a7, 0 0 20px #3771a7, 0 0 40px #3771a7;
+}
+
+
+.home-title {
+  font-size: 2rem;
+  color: #d4d4d4;
+  margin-bottom: 20px;
+  text-align: center; /* Centrar el texto */
+}
+
+.biseccion-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  width: 90%;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #b4b4b4;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.form-group input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #3771a7;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #fff;
+  outline: none;
+}
+
+.form-group input::placeholder {
+  color: #777;
+}
+
+/* Campos en una sola fila */
+.input-row {
+  display: flex;
+  gap: 100px; /* Espacio entre los campos */
+  margin-bottom: 15px;
+}
+
+.input-row .form-group {
+  flex: 2; /* Cada campo ocupa el mismo espacio */
+}
+
+/* Campo de ecuación */
+.equation-group input {
+  width: 100%;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 columnas */
+  gap: 10px;
+  
+  width: 50%;
+margin: auto;
+margin-bottom: 20px;
+}
+
+.calculator-button {
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #00ffcc;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #3771a7;
+  box-shadow: 0 0 5px #3771a7, 0 0 2px #3771a7, 0 0 4px #3771a7;
+}
+
+.calculator-button:hover {
+  transform: scale(1.05);
+  border: 2px solid #3771a7;
+  box-shadow: 0 0 5px #3771a7, 0 0 2px #3771a7, 0 0 4px #3771a7;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 2px solid #00ffcc;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #3771a7;
+  box-shadow: 0 0 5px #3771a7, 0 0 2px #3771a7, 0 0 4px #3771a7;
+}
+
+.submit-button:hover {
+  transform: scale(.9);
+  border: 2px solid #3771a7;
+  box-shadow: 0 0 5px #3771a7, 0 0 2px #3771a7, 0 0 4px #3771a7;
+}
+.back-button {
+  top: 20px; /* Distancia desde la parte superior */
+  left: 20px; /* Distancia desde la izquierda */
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 2px solid #3771a7;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 1px #3771a7, 0 0 2px #3771a7, 0 0 4px #3771a7;
+}
+
+.back-button:hover {
+  transform: scale(1.05);
+  background-color: #3771a7;
+}
+/* Mensaje de error */
+.error-message {
+  color: #ff4d4d; /* Color rojo */
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-align: center;
+}
+.results-table {
+  margin-top: 20px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #3771a7;
+  text-align: center;
+}
+
+th {
+  background-color: #3771a7;
+  color: #fff;
+}
+
+tr:hover {
+  background-color: #202020;
+}
