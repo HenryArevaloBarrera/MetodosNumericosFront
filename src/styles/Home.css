@@ -17,8 +17,9 @@
   justify-content: center; /* Centrar verticalmente */
   height: 100vh; /* Ocupa toda la altura de la pantalla */
   width: 100%;
-  background-color: #202020;
-  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0C0F1F, #191E33); /* Degradado sutil */
+  font-family: 'Segoe UI', 'Inter', sans-serif; /* Fuente moderna */
+  color: #F3E8D7; /* Color del texto */
 }
 
 .api-container2 {
@@ -26,13 +27,13 @@
   height: 80vh;
   width: 90%; /* Ancho del contenedor principal */
   max-width: 1200px; /* Ancho máximo */
-  border-radius: 30px;
-  background-color: transparent;
-  font-family: Arial, sans-serif;
-  color: #fff; /* Color del texto */
+  border-radius: 20px; /* Bordes redondeados */
+  background-color: rgba(25, 30, 51, 0.8); /* Fondo azul oscuro con transparencia */
+  font-family: 'Segoe UI', 'Inter', sans-serif;
+  color: #F3E8D7; /* Color del texto */
   transition: all 0.3s ease;
-  border: 2px solid #3771a7;
-  box-shadow: 0 0 50px #3771a7, 0 0 20px #3771a7, 0 0 40px #3771a7;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
   animation: slideUp 1s ease-out 0.2s; /* Animación con retraso */
   animation-fill-mode: backwards; /* Mantener el estado final de la animación */
 }
@@ -49,15 +50,16 @@
 
 .home-title {
   font-size: 2.5rem;
-  color: #d4d4d4;
+  color: #F3E8D7; /* Color del texto */
   margin-bottom: 10px;
+  font-weight: bold; /* Negrita */
   animation: slideUp 0.5s ease-out 0.2s; /* Animación con retraso */
   animation-fill-mode: backwards; /* Mantener el estado final de la animación */
 }
 
 .home-subtitle {
   font-size: 1.5rem;
-  color: #b4b4b4;
+  color: #F3E8D7; /* Color del texto */
   margin-bottom: 30px;
   font-style: italic;
   animation: slideUp 0.5s ease-out 0.4s; /* Animación con retraso */
@@ -75,7 +77,7 @@
   animation-fill-mode: backwards;
   overflow-x: auto; /* Permitir desplazamiento horizontal si hay muchos botones */
   scrollbar-width: thin; /* Ancho de la barra de desplazamiento (para Firefox) */
-  scrollbar-color: #3771a7 #202020; /* Color de la barra de desplazamiento (para Firefox) */
+  scrollbar-color: #191E33 #0C0F1F; /* Color de la barra de desplazamiento (para Firefox) */
 }
 
 /* Estilos para la barra de desplazamiento en navegadores WebKit (Chrome, Safari) */
@@ -84,36 +86,38 @@
 }
 
 .buttons-container::-webkit-scrollbar-track {
-  background: #202020; /* Color de fondo de la pista */
+  background: #0C0F1F; /* Color de fondo de la pista */
   border-radius: 5px; /* Bordes redondeados */
 }
 
 .buttons-container::-webkit-scrollbar-thumb {
-  background: #3771a7; /* Color del pulgar de la barra de desplazamiento */
+  background: #191E33; /* Color del pulgar de la barra de desplazamiento */
   border-radius: 5px; /* Bordes redondeados */
 }
 
 .buttons-container::-webkit-scrollbar-thumb:hover {
-  background: #00ffcc; /* Color del pulgar al pasar el mouse */
+  background: #2A304F; /* Color del pulgar al pasar el mouse */
 }
 
 .home-button {
   height: 100px; /* Altura fija */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 1rem;
-  color: #fff; /* Color del texto */
-  background-color: transparent; /* Fondo transparente */
-  border: 2px solid #3771a7; /* Borde sólido con color neon */
-  border-radius: 10px; /* Bordes redondeados */
+  color: #F3E8D7; /* Color del texto */
+  background-color: #191E33; /* Fondo azul oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  border-radius: 40px / 40px; /* Bordes redondeados */
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-  box-shadow: 0 0 10px #3771a7, 0 0 20px #3771a7, 0 0 10px #3771a7;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
 .home-button:hover {
   transform: scale(1.05);
+  background-color: #2A304F; /* Cambio de color al pasar el mouse */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
 }

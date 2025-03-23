@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Plot from 'react-plotly.js'; // Importar Plotly
-import '../styles/biseccion.css'; // Importar estilos
+import '../styles/secante.css'; // Importar estilos
 
-const Biseccion = () => {
+const Secante = () => {
   const navigate = useNavigate();
 
   const [equation, setEquation] = useState('');
-  const [xo, setXo] = useState('');
-  const [xu, setXu] = useState('');
+  const [x0, setX0] = useState('');
+  const [x1, setX1] = useState('');
   const [error, setError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
@@ -43,9 +43,9 @@ const Biseccion = () => {
     setErrorMessage('');
 
     const formattedEquation = formatEquationForURL(equation);
-    const url = `http://localhost:5002/biseccion?ecuacion=${encodeURIComponent(
+    const url = `http://localhost:5004/secante?ecuacion=${encodeURIComponent(
       formattedEquation
-    )}&xo=${xo}&xu=${xu}&tol_error=${error}`;
+    )}&x0=${x0}&x1=${x1}&tol_error=${error}`;
 
     try {
       const response = await fetch(url, {
@@ -86,12 +86,12 @@ const Biseccion = () => {
   const plotData = () => {
     if (results.length === 0) return null;
 
-    // Extraer los valores de xm y f(xm) de los resultados
-    const xValues = results.map((row) => row.xm);
-    const yValues = results.map((row) => row.fxm);
+    // Extraer los valores de x_siguiente y f(x_siguiente) de los resultados
+    const xValues = results.map((row) => row.x_siguiente);
+    const yValues = results.map((row) => row.f_siguiente);
 
     // Crear un rango de valores para graficar la ecuación
-    const xRange = Array.from({ length: 100 }, (_, i) => xo + (i * (xu - xo)) / 100);
+    const xRange = Array.from({ length: 100 }, (_, i) => x0 + (i * (x1 - x0)) / 100);
     const yRange = xRange.map((x) => {
       try {
         // Evaluar la ecuación en el rango de valores
@@ -118,7 +118,7 @@ const Biseccion = () => {
             y: yValues,
             type: 'scatter',
             mode: 'markers',
-            name: 'Puntos (xm, f(xm))',
+            name: 'Puntos (x_siguiente, f(x_siguiente))',
             marker: { color: 'red', size: 10 },
           },
         ]}
@@ -136,8 +136,8 @@ const Biseccion = () => {
   return (
     <div className="home-container">
       <div className="api-container2">
-        <h1 className="home-title">Método de Bisección</h1>
-        <form onSubmit={handleSubmit} className="biseccion-form">
+        <h1 className="home-title">Método de la Secante</h1>
+        <form onSubmit={handleSubmit} className="secante-form">
           <div className="form-group equation-group">
             <label htmlFor="equation">Ecuación:</label>
             <input
@@ -151,24 +151,24 @@ const Biseccion = () => {
 
           <div className="input-row">
             <div className="form-group">
-              <label htmlFor="xo">Valor de xo:</label>
+              <label htmlFor="x0">Valor de x0:</label>
               <input
                 type="number"
-                id="xo"
-                value={xo}
-                onChange={(e) => setXo(e.target.value)}
-                placeholder="xo"
+                id="x0"
+                value={x0}
+                onChange={(e) => setX0(e.target.value)}
+                placeholder="x0"
                 required
               />
             </div>
             <div className="form-group">
-              <label htmlFor="xu">Valor de xu:</label>
+              <label htmlFor="x1">Valor de x1:</label>
               <input
                 type="number"
-                id="xu"
-                value={xu}
-                onChange={(e) => setXu(e.target.value)}
-                placeholder="xu"
+                id="x1"
+                value={x1}
+                onChange={(e) => setX1(e.target.value)}
+                placeholder="x1"
                 required
               />
             </div>
@@ -271,10 +271,10 @@ const Biseccion = () => {
               <thead>
                 <tr>
                   <th>Iteración</th>
-                  <th>xo</th>
-                  <th>xu</th>
-                  <th>xm</th>
-                  <th>f(xm)</th>
+                  <th>x_actual</th>
+                  <th>x_anterior</th>
+                  <th>x_siguiente</th>
+                  <th>f(x_siguiente)</th>
                   <th>Error</th>
                 </tr>
               </thead>
@@ -282,10 +282,10 @@ const Biseccion = () => {
                 {results.map((row, index) => (
                   <tr key={index}>
                     <td>{row.nIteracion}</td>
-                    <td>{row.xo}</td>
-                    <td>{row.xu}</td>
-                    <td>{row.xm}</td>
-                    <td>{row.fxm}</td>
+                    <td>{row.x_actual}</td>
+                    <td>{row.x_anterior}</td>
+                    <td>{row.x_siguiente}</td>
+                    <td>{row.f_siguiente}</td>
                     <td>{row.error}</td>
                   </tr>
                 ))}
@@ -304,4 +304,4 @@ const Biseccion = () => {
   );
 };
 
-export default Biseccion;
+export default Secante;

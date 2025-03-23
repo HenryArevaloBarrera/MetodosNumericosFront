@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Plot from 'react-plotly.js'; // Importar Plotly
-import '../styles/biseccion.css'; // Importar estilos
+import '../styles/newtonraphson.css'; // Importar estilos
 
-const Biseccion = () => {
+const NewtonRaphson = () => {
   const navigate = useNavigate();
 
   const [equation, setEquation] = useState('');
-  const [xo, setXo] = useState('');
-  const [xu, setXu] = useState('');
+  const [x0, setX0] = useState('');
   const [error, setError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
@@ -43,9 +42,9 @@ const Biseccion = () => {
     setErrorMessage('');
 
     const formattedEquation = formatEquationForURL(equation);
-    const url = `http://localhost:5002/biseccion?ecuacion=${encodeURIComponent(
+    const url = `http://localhost:5003/newton_raphson?ecuacion=${encodeURIComponent(
       formattedEquation
-    )}&xo=${xo}&xu=${xu}&tol_error=${error}`;
+    )}&x0=${x0}&tol_error=${error}`;
 
     try {
       const response = await fetch(url, {
@@ -86,12 +85,12 @@ const Biseccion = () => {
   const plotData = () => {
     if (results.length === 0) return null;
 
-    // Extraer los valores de xm y f(xm) de los resultados
-    const xValues = results.map((row) => row.xm);
-    const yValues = results.map((row) => row.fxm);
+    // Extraer los valores de xi y f(xi) de los resultados
+    const xValues = results.map((row) => row.xi);
+    const yValues = results.map((row) => row.fxi);
 
     // Crear un rango de valores para graficar la ecuación
-    const xRange = Array.from({ length: 100 }, (_, i) => xo + (i * (xu - xo)) / 100);
+    const xRange = Array.from({ length: 100 }, (_, i) => x0 - 5 + (i * 10) / 100);
     const yRange = xRange.map((x) => {
       try {
         // Evaluar la ecuación en el rango de valores
@@ -118,7 +117,7 @@ const Biseccion = () => {
             y: yValues,
             type: 'scatter',
             mode: 'markers',
-            name: 'Puntos (xm, f(xm))',
+            name: 'Puntos (xi, f(xi))',
             marker: { color: 'red', size: 10 },
           },
         ]}
@@ -136,8 +135,8 @@ const Biseccion = () => {
   return (
     <div className="home-container">
       <div className="api-container2">
-        <h1 className="home-title">Método de Bisección</h1>
-        <form onSubmit={handleSubmit} className="biseccion-form">
+        <h1 className="home-title">Método de Newton-Raphson</h1>
+        <form onSubmit={handleSubmit} className="newton-raphson-form">
           <div className="form-group equation-group">
             <label htmlFor="equation">Ecuación:</label>
             <input
@@ -151,24 +150,13 @@ const Biseccion = () => {
 
           <div className="input-row">
             <div className="form-group">
-              <label htmlFor="xo">Valor de xo:</label>
+              <label htmlFor="x0">Valor de x0:</label>
               <input
                 type="number"
-                id="xo"
-                value={xo}
-                onChange={(e) => setXo(e.target.value)}
-                placeholder="xo"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="xu">Valor de xu:</label>
-              <input
-                type="number"
-                id="xu"
-                value={xu}
-                onChange={(e) => setXu(e.target.value)}
-                placeholder="xu"
+                id="x0"
+                value={x0}
+                onChange={(e) => setX0(e.target.value)}
+                placeholder="x0"
                 required
               />
             </div>
@@ -271,10 +259,9 @@ const Biseccion = () => {
               <thead>
                 <tr>
                   <th>Iteración</th>
-                  <th>xo</th>
-                  <th>xu</th>
-                  <th>xm</th>
-                  <th>f(xm)</th>
+                  <th>xi</th>
+                  <th>f(xi)</th>
+                  <th>g'(xi)</th>
                   <th>Error</th>
                 </tr>
               </thead>
@@ -282,10 +269,9 @@ const Biseccion = () => {
                 {results.map((row, index) => (
                   <tr key={index}>
                     <td>{row.nIteracion}</td>
-                    <td>{row.xo}</td>
-                    <td>{row.xu}</td>
-                    <td>{row.xm}</td>
-                    <td>{row.fxm}</td>
+                    <td>{row.xi}</td>
+                    <td>{row.fxi}</td>
+                    <td>{row.g_prima}</td>
                     <td>{row.error}</td>
                   </tr>
                 ))}
@@ -304,4 +290,4 @@ const Biseccion = () => {
   );
 };
 
-export default Biseccion;
+export default NewtonRaphson;

@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Plot from 'react-plotly.js'; // Importar Plotly
 import '../styles/biseccion.css'; // Importar estilos
 
-const Biseccion = () => {
+const PuntoFijo = () => {
   const navigate = useNavigate();
 
   const [equation, setEquation] = useState('');
-  const [xo, setXo] = useState('');
-  const [xu, setXu] = useState('');
+  const [transformada, setTransformada] = useState('');
+  const [x0, setX0] = useState('');
   const [error, setError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
+  const [activeField, setActiveField] = useState('equation'); // Estado para controlar el campo activo
 
   const areParenthesesBalanced = (str) => {
     const stack = [];
@@ -27,6 +28,7 @@ const Biseccion = () => {
 
   const formatEquationForURL = (eq) => {
     return eq
+      .replace(/\+/g, '%2B')  // Codificar el signo +
       .replace(/√/g, 'sqrt')
       .replace(/\^/g, '**')
       .replace(/×/g, '*')
@@ -43,9 +45,8 @@ const Biseccion = () => {
     setErrorMessage('');
 
     const formattedEquation = formatEquationForURL(equation);
-    const url = `http://localhost:5002/biseccion?ecuacion=${encodeURIComponent(
-      formattedEquation
-    )}&xo=${xo}&xu=${xu}&tol_error=${error}`;
+    const formattedTransformada = formatEquationForURL(transformada);
+    const url = `http://localhost:5001/punto_fijo?ecuacion=${formattedEquation}&transformada=${formattedTransformada}&x0=${x0}&tol_error=${error}`;
 
     try {
       const response = await fetch(url, {
@@ -59,26 +60,46 @@ const Biseccion = () => {
         throw new Error(data.error || 'Error desconocido en el servidor');
       }
 
-      setResults(data);
-      setErrorMessage(''); // Limpiar errores si la solicitud es exitosa
+      // Verificar si hay NaN en los resultados
+      const hasNaN = data.some((row) => isNaN(row.error) || isNaN(row.fxi));
+      if (hasNaN) {
+        setErrorMessage('El método no converge. Intenta con otra función de iteración o valor inicial.');
+        setResults([]);
+      } else {
+        setResults(data);
+        setErrorMessage('');
+      }
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      setErrorMessage(error.message); // Mostrar el error del backend en la UI
+      setErrorMessage('Error al procesar la solicitud. Verifica los datos ingresados.');
+      setResults([]);
     }
   };
 
   const addToEquation = (value) => {
-    setEquation((prev) => prev + value);
+    if (activeField === 'equation') {
+      setEquation((prev) => prev + value);
+    } else if (activeField === 'transformada') {
+      setTransformada((prev) => prev + value);
+    }
     setErrorMessage('');
   };
 
   const deleteLastCharacter = () => {
-    setEquation((prev) => prev.slice(0, -1));
+    if (activeField === 'equation') {
+      setEquation((prev) => prev.slice(0, -1));
+    } else if (activeField === 'transformada') {
+      setTransformada((prev) => prev.slice(0, -1));
+    }
     setErrorMessage('');
   };
 
   const clearEquation = () => {
-    setEquation('');
+    if (activeField === 'equation') {
+      setEquation('');
+    } else if (activeField === 'transformada') {
+      setTransformada('');
+    }
     setErrorMessage('');
   };
 
@@ -86,12 +107,12 @@ const Biseccion = () => {
   const plotData = () => {
     if (results.length === 0) return null;
 
-    // Extraer los valores de xm y f(xm) de los resultados
-    const xValues = results.map((row) => row.xm);
-    const yValues = results.map((row) => row.fxm);
+    // Extraer los valores de x_actual y x_siguiente de los resultados
+    const xValues = results.map((row) => row.x_actual);
+    const yValues = results.map((row) => row.x_siguiente);
 
     // Crear un rango de valores para graficar la ecuación
-    const xRange = Array.from({ length: 100 }, (_, i) => xo + (i * (xu - xo)) / 100);
+    const xRange = Array.from({ length: 100 }, (_, i) => x0 + (i * (x0 + 5)) / 100);
     const yRange = xRange.map((x) => {
       try {
         // Evaluar la ecuación en el rango de valores
@@ -118,7 +139,7 @@ const Biseccion = () => {
             y: yValues,
             type: 'scatter',
             mode: 'markers',
-            name: 'Puntos (xm, f(xm))',
+            name: 'Puntos (x_actual, x_siguiente)',
             marker: { color: 'red', size: 10 },
           },
         ]}
@@ -136,7 +157,7 @@ const Biseccion = () => {
   return (
     <div className="home-container">
       <div className="api-container2">
-        <h1 className="home-title">Método de Bisección</h1>
+        <h1 className="home-title">Método de Punto Fijo</h1>
         <form onSubmit={handleSubmit} className="biseccion-form">
           <div className="form-group equation-group">
             <label htmlFor="equation">Ecuación:</label>
@@ -145,30 +166,33 @@ const Biseccion = () => {
               id="equation"
               value={equation}
               placeholder="Ingresa la ecuación"
+              onFocus={() => setActiveField('equation')} // Cambiar el campo activo al enfocar
               readOnly // Bloquear edición manual
+            />
+          </div>
+
+          <div className="form-group equation-group">
+            <label htmlFor="transformada">Función de iteración (g(x)):</label>
+            <input
+              type="text"
+              id="transformada"
+              value={transformada}
+              placeholder="Ingresa la función de iteración"
+              onFocus={() => setActiveField('transformada')} // Cambiar el campo activo al enfocar
+              readOnly // Bloquear edición manual
+              required
             />
           </div>
 
           <div className="input-row">
             <div className="form-group">
-              <label htmlFor="xo">Valor de xo:</label>
+              <label htmlFor="x0">Valor de x0:</label>
               <input
                 type="number"
-                id="xo"
-                value={xo}
-                onChange={(e) => setXo(e.target.value)}
-                placeholder="xo"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="xu">Valor de xu:</label>
-              <input
-                type="number"
-                id="xu"
-                value={xu}
-                onChange={(e) => setXu(e.target.value)}
-                placeholder="xu"
+                id="x0"
+                value={x0}
+                onChange={(e) => setX0(e.target.value)}
+                placeholder="x0"
                 required
               />
             </div>
@@ -271,10 +295,8 @@ const Biseccion = () => {
               <thead>
                 <tr>
                   <th>Iteración</th>
-                  <th>xo</th>
-                  <th>xu</th>
-                  <th>xm</th>
-                  <th>f(xm)</th>
+                  <th>x_actual</th>
+                  <th>x_siguiente</th>
                   <th>Error</th>
                 </tr>
               </thead>
@@ -282,10 +304,8 @@ const Biseccion = () => {
                 {results.map((row, index) => (
                   <tr key={index}>
                     <td>{row.nIteracion}</td>
-                    <td>{row.xo}</td>
-                    <td>{row.xu}</td>
-                    <td>{row.xm}</td>
-                    <td>{row.fxm}</td>
+                    <td>{row.x_actual}</td>
+                    <td>{row.x_siguiente}</td>
                     <td>{row.error}</td>
                   </tr>
                 ))}
@@ -304,4 +324,4 @@ const Biseccion = () => {
   );
 };
 
-export default Biseccion;
+export default PuntoFijo;

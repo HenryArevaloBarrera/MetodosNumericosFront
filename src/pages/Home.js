@@ -9,12 +9,12 @@ const Home = () => {
   const buttonNames = [
     "Punto Fijo",
     "Biseccion",
-    "Newton-Raphson",
+    "Newton Raphson",
     "Secante",
     "Regla Falsa",
     "Gauss-Jordan",
     "Jacobi",
-    "Gauss-Seidel",
+    "Gauss Seidel",
     "Lagrange",
     "Trapecio"
   ];
@@ -23,8 +23,8 @@ const Home = () => {
   const formatMethodNameForURL = (name) => {
     return name
       .toLowerCase() // Convertir a minúsculas
-      .replace(/ /g, '_') // Reemplazar espacios con guiones
-      .replace(/[^a-z0-9-]/g, ''); // Eliminar caracteres especiales
+      .replace(/ /g, '_') // Reemplazar espacios con guiones bajos
+      .replace(/[^a-z0-9_]/g, ''); // Eliminar caracteres especiales, excepto guiones bajos
   };
 
   return (
