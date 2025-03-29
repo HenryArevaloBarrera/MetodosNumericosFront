@@ -27,10 +27,13 @@ const Secante = () => {
 
   const formatEquationForURL = (eq) => {
     return eq
-      .replace(/√/g, 'sqrt')
-      .replace(/\^/g, '**')
-      .replace(/×/g, '*')
-      .replace(/÷/g, '/');
+    .replace(/√/g, 'sqrt')          // √ → sqrt
+    .replace(/×/g, '*')             // × → *
+    .replace(/e\^/g, 'exp')         // e^ → exp
+    .replace(/\^/g, '**')           // ^ → **
+    .replace(/÷/g, '/')             // ÷ → /
+    .replace(/(\d)([x(])/g, '$1*$2')     // 4x → 4*x, 4( → 4*(
+    .replace(/(\))([\dx])/g, '$1*$2');   // )x → )*x, )4 → )*4
   };
 
   const handleSubmit = async (e) => {
@@ -292,11 +295,7 @@ const Secante = () => {
               </tbody>
             </table>
 
-            {/* Gráfica de la ecuación y los puntos */}
-            <div className="plot-container">
-              <h2>Gráfica de la ecuación y puntos de iteración</h2>
-              {plotData()}
-            </div>
+            
           </div>
         )}
       </div>

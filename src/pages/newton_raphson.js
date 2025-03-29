@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Plot from 'react-plotly.js'; // Importar Plotly
-import '../styles/newtonraphson.css'; // Importar estilos
+import Plot from 'react-plotly.js';
+import '../styles/biseccion.css';
 
 const NewtonRaphson = () => {
   const navigate = useNavigate();
@@ -26,10 +26,13 @@ const NewtonRaphson = () => {
 
   const formatEquationForURL = (eq) => {
     return eq
-      .replace(/√/g, 'sqrt')
-      .replace(/\^/g, '**')
-      .replace(/×/g, '*')
-      .replace(/÷/g, '/');
+      .replace(/√/g, 'sqrt')          // √ → sqrt
+      .replace(/×/g, '*')             // × → *
+      .replace(/e\^/g, 'exp')         // e^ → exp
+      .replace(/\^/g, '**')           // ^ → **
+      .replace(/÷/g, '/')             // ÷ → /
+      .replace(/(\d)([x(])/g, '$1*$2')     // 4x → 4*x, 4( → 4*(
+      .replace(/(\))([\dx])/g, '$1*$2');   // )x → )*x, )4 → )*4
   };
 
   const handleSubmit = async (e) => {
@@ -59,10 +62,10 @@ const NewtonRaphson = () => {
       }
 
       setResults(data);
-      setErrorMessage(''); // Limpiar errores si la solicitud es exitosa
+      setErrorMessage('');
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      setErrorMessage(error.message); // Mostrar el error del backend en la UI
+      setErrorMessage(error.message);
     }
   };
 
@@ -81,21 +84,17 @@ const NewtonRaphson = () => {
     setErrorMessage('');
   };
 
-  // Función para graficar la ecuación y los puntos de la tabla
   const plotData = () => {
     if (results.length === 0) return null;
 
-    // Extraer los valores de xi y f(xi) de los resultados
     const xValues = results.map((row) => row.xi);
     const yValues = results.map((row) => row.fxi);
 
-    // Crear un rango de valores para graficar la ecuación
     const xRange = Array.from({ length: 100 }, (_, i) => x0 - 5 + (i * 10) / 100);
     const yRange = xRange.map((x) => {
       try {
-        // Evaluar la ecuación en el rango de valores
         const expr = equation.replace(/x/g, `(${x})`);
-        return eval(expr); // ¡Cuidado! Usar eval puede ser peligroso en aplicaciones reales
+        return eval(expr);
       } catch (e) {
         return NaN;
       }
@@ -144,7 +143,7 @@ const NewtonRaphson = () => {
               id="equation"
               value={equation}
               placeholder="Ingresa la ecuación"
-              readOnly // Bloquear edición manual
+              readOnly
             />
           </div>
 
@@ -278,11 +277,7 @@ const NewtonRaphson = () => {
               </tbody>
             </table>
 
-            {/* Gráfica de la ecuación y los puntos */}
-            <div className="plot-container">
-              <h2>Gráfica de la ecuación y puntos de iteración</h2>
-              {plotData()}
-            </div>
+          
           </div>
         )}
       </div>

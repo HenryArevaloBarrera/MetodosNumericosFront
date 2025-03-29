@@ -11,12 +11,12 @@ const Home = () => {
     "Biseccion",
     "Newton Raphson",
     "Secante",
-    "Regla Falsa",
-    "Gauss-Jordan",
     "Jacobi",
     "Gauss Seidel",
-    "Lagrange",
-    "Trapecio"
+    "-----",
+    "-----",
+    "-----",
+    "-----"
   ];
 
   // Función para convertir el nombre del método en una URL válida

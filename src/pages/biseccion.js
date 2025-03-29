@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Plot from 'react-plotly.js'; // Importar Plotly
-import '../styles/biseccion.css'; // Importar estilos
+import '../styles/biseccion.css';
 
 const Biseccion = () => {
   const navigate = useNavigate();
@@ -9,9 +8,10 @@ const Biseccion = () => {
   const [equation, setEquation] = useState('');
   const [xo, setXo] = useState('');
   const [xu, setXu] = useState('');
-  const [error, setError] = useState('');
+  const [tolError, setTolError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const areParenthesesBalanced = (str) => {
     const stack = [];
@@ -25,45 +25,63 @@ const Biseccion = () => {
     return stack.length === 0;
   };
 
-  const formatEquationForURL = (eq) => {
+  const formatEquationForBackend = (eq) => {
+    // Convertir la notación visual a notación computable
     return eq
-      .replace(/√/g, 'sqrt')
-      .replace(/\^/g, '**')
-      .replace(/×/g, '*')
-      .replace(/÷/g, '/');
+    .replace(/√/g, 'sqrt') 
+    .replace(/×/g, '*') 
+      .replace(/e\^/g, 'exp')    // e^ → exp
+      .replace(/\^/g, '**')       // ^ → **
+      .replace(/÷/g, '/')         // ÷ → /
+      .replace(/(\d)([x(])/g, '$1*$2')    // 4x → 4*x
+      .replace(/(\))([\dx])/g, '$1*$2');  // )x → )*x
+  };
+
+  const formatEquationForDisplay = (eq) => {
+    // Convertir a notación matemática visual
+    return eq
+      .replace(/exp/g, 'e^')    // exp → e^
+      .replace(/\*\*/g, '^')    // ** → ^
+      .replace(/\//g, '÷')      // / → ÷
+      .replace(/\*+/g, '');     // Eliminar * (multiplicaciones implícitas)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage('');
 
     if (!areParenthesesBalanced(equation)) {
       setErrorMessage('Error: Los paréntesis no están balanceados.');
+      setIsLoading(false);
       return;
     }
-    setErrorMessage('');
 
-    const formattedEquation = formatEquationForURL(equation);
+    const formattedEquation = formatEquationForBackend(equation);
     const url = `http://localhost:5002/biseccion?ecuacion=${encodeURIComponent(
       formattedEquation
-    )}&xo=${xo}&xu=${xu}&tol_error=${error}`;
+    )}&xo=${xo}&xu=${xu}&tol_error=${tolError}`;
 
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
+      const response = await fetch(url);
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Error desconocido en el servidor');
+        throw new Error(data.error || 'Error en el servidor');
+      }
+
+      if (!Array.isArray(data)) {
+        throw new Error('Formato de respuesta inválido del servidor');
       }
 
       setResults(data);
-      setErrorMessage(''); // Limpiar errores si la solicitud es exitosa
+      setErrorMessage('');
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      setErrorMessage(error.message); // Mostrar el error del backend en la UI
+      setErrorMessage(error.message);
+      setResults([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,55 +100,14 @@ const Biseccion = () => {
     setErrorMessage('');
   };
 
-  // Función para graficar la ecuación y los puntos de la tabla
-  const plotData = () => {
-    if (results.length === 0) return null;
+  const safeFormat = (value, decimals = 6) => {
+    if (typeof value !== 'number' || isNaN(value)) return '-';
+    return value.toFixed(decimals);
+  };
 
-    // Extraer los valores de xm y f(xm) de los resultados
-    const xValues = results.map((row) => row.xm);
-    const yValues = results.map((row) => row.fxm);
-
-    // Crear un rango de valores para graficar la ecuación
-    const xRange = Array.from({ length: 100 }, (_, i) => xo + (i * (xu - xo)) / 100);
-    const yRange = xRange.map((x) => {
-      try {
-        // Evaluar la ecuación en el rango de valores
-        const expr = equation.replace(/x/g, `(${x})`);
-        return eval(expr); // ¡Cuidado! Usar eval puede ser peligroso en aplicaciones reales
-      } catch (e) {
-        return NaN;
-      }
-    });
-
-    return (
-      <Plot
-        data={[
-          {
-            x: xRange,
-            y: yRange,
-            type: 'scatter',
-            mode: 'lines',
-            name: 'Ecuación',
-            line: { color: 'blue' },
-          },
-          {
-            x: xValues,
-            y: yValues,
-            type: 'scatter',
-            mode: 'markers',
-            name: 'Puntos (xm, f(xm))',
-            marker: { color: 'red', size: 10 },
-          },
-        ]}
-        layout={{
-          title: 'Gráfica de la ecuación y puntos de iteración',
-          xaxis: { title: 'x' },
-          yaxis: { title: 'f(x)' },
-          showlegend: true,
-        }}
-        style={{ width: '100%', height: '400px' }}
-      />
-    );
+  const safeExponential = (value, decimals = 4) => {
+    if (typeof value !== 'number' || isNaN(value)) return '-';
+    return value.toExponential(decimals);
   };
 
   return (
@@ -139,13 +116,14 @@ const Biseccion = () => {
         <h1 className="home-title">Método de Bisección</h1>
         <form onSubmit={handleSubmit} className="biseccion-form">
           <div className="form-group equation-group">
-            <label htmlFor="equation">Ecuación:</label>
+            <label htmlFor="equation">Ecuación (usa 'x' como variable):</label>
             <input
               type="text"
               id="equation"
-              value={equation}
-              placeholder="Ingresa la ecuación"
-              readOnly // Bloquear edición manual
+              value={formatEquationForDisplay(equation)}
+              placeholder="Usa los botones para ingresar la ecuación"
+              readOnly
+              className="equation-input"
             />
           </div>
 
@@ -157,7 +135,8 @@ const Biseccion = () => {
                 id="xo"
                 value={xo}
                 onChange={(e) => setXo(e.target.value)}
-                placeholder="xo"
+                placeholder="Ej: 1"
+                step="any"
                 required
               />
             </div>
@@ -168,22 +147,23 @@ const Biseccion = () => {
                 id="xu"
                 value={xu}
                 onChange={(e) => setXu(e.target.value)}
-                placeholder="xu"
+                placeholder="Ej: 3"
+                step="any"
                 required
               />
             </div>
             <div className="form-group">
-              <label htmlFor="error">Error mínimo:</label>
+              <label htmlFor="tolError">Tolerancia de error:</label>
               <input
                 type="number"
-                id="error"
-                value={error}
-                onChange={(e) => setError(e.target.value)}
-                placeholder="Error"
-                required
-                min="0.000001"
+                id="tolError"
+                value={tolError}
+                onChange={(e) => setTolError(e.target.value)}
+                placeholder="Ej: 0.0001"
+                min="0.0000000001"
                 max="0.999999"
                 step="any"
+                required
               />
             </div>
           </div>
@@ -200,7 +180,7 @@ const Biseccion = () => {
               </button>
             ))}
 
-            {['+', '-', '×', '÷', 'x'].map((op) => (
+            {['+', '-', '×', '÷'].map((op) => (
               <button
                 key={op}
                 type="button"
@@ -211,36 +191,25 @@ const Biseccion = () => {
               </button>
             ))}
 
-            {['sin(', 'cos(', 'tan('].map((func) => (
+            {['sin(', 'cos(', 'tan(', 'e^(', '√(', '^('].map((func) => (
               <button
                 key={func}
                 type="button"
                 className="calculator-button"
                 onClick={() => addToEquation(func)}
               >
-                {func.replace('(', '')}
+                {func.replace('(', '').replace('e^', 'e^')}
               </button>
             ))}
 
-            {['e^(', '√(', '^('].map((func) => (
+            {['(', ')', 'x'].map((char) => (
               <button
-                key={func}
+                key={char}
                 type="button"
                 className="calculator-button"
-                onClick={() => addToEquation(func)}
+                onClick={() => addToEquation(char)}
               >
-                {func}
-              </button>
-            ))}
-
-            {['(', ')'].map((paren) => (
-              <button
-                key={paren}
-                type="button"
-                className="calculator-button"
-                onClick={() => addToEquation(paren)}
-              >
-                {paren}
+                {char}
               </button>
             ))}
 
@@ -252,50 +221,54 @@ const Biseccion = () => {
             </button>
           </div>
 
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {errorMessage && (
+            <div className="error-message">
+              <strong>Error:</strong> {errorMessage}
+            </div>
+          )}
 
           <div className="action-buttons">
             <button type="button" className="back-button" onClick={() => navigate('/')}>
               Regresar
             </button>
-            <button type="submit" className="submit-button">
-              Enviar Datos
+            <button type="submit" className="submit-button" disabled={isLoading}>
+              {isLoading ? 'Calculando...' : 'Calcular'}
             </button>
           </div>
         </form>
 
-        {results.length > 0 && (
-          <div className="results-table">
-            <h2>Resultados</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Iteración</th>
-                  <th>xo</th>
-                  <th>xu</th>
-                  <th>xm</th>
-                  <th>f(xm)</th>
-                  <th>Error</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.nIteracion}</td>
-                    <td>{row.xo}</td>
-                    <td>{row.xu}</td>
-                    <td>{row.xm}</td>
-                    <td>{row.fxm}</td>
-                    <td>{row.error}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {isLoading && <div className="loading-indicator">Procesando...</div>}
 
-            {/* Gráfica de la ecuación y los puntos */}
-            <div className="plot-container">
-              <h2>Gráfica de la ecuación y puntos de iteración</h2>
-              {plotData()}
+        {results.length > 0 && (
+          <div className="results-container">
+            <div className="results-table">
+              <h2>Resultados</h2>
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Iteración</th>
+                      <th>xo</th>
+                      <th>xu</th>
+                      <th>xm</th>
+                      <th>f(xm)</th>
+                      <th>Error</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((row, index) => (
+                      <tr key={index}>
+                        <td>{row.nIteracion}</td>
+                        <td>{safeFormat(row.xo)}</td>
+                        <td>{safeFormat(row.xu)}</td>
+                        <td>{safeFormat(row.xm)}</td>
+                        <td>{safeExponential(row.fxm)}</td>
+                        <td>{safeExponential(row.error)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}

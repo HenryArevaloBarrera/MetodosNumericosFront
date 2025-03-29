@@ -17,7 +17,9 @@ function App() {
         <Route path="/punto_fijo" element={<ApiComponent1 />} /> {/* Ruta para el método2 */}
         <Route path="/newton_raphson" element={<ApiComponent2 />} /> {/* Ruta para el método1 */}
         <Route path="/secante" element={<ApiComponent3 />} /> {/* Ruta para el método1 */}
+        <Route path="/jacobi" element={<ApiComponent4 />} /> {/* Ruta para el método1 */}
         <Route path="/gauss_seidel" element={<ApiComponent5 />} /> {/* Ruta para el método1 */}
+
 
 
       </Routes>
