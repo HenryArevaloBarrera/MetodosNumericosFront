@@ -27,13 +27,13 @@ const Secante = () => {
 
   const formatEquationForURL = (eq) => {
     return eq
-    .replace(/√/g, 'sqrt')          // √ → sqrt
-    .replace(/×/g, '*')             // × → *
-    .replace(/e\^/g, 'exp')         // e^ → exp
-    .replace(/\^/g, '**')           // ^ → **
-    .replace(/÷/g, '/')             // ÷ → /
-    .replace(/(\d)([x(])/g, '$1*$2')     // 4x → 4*x, 4( → 4*(
-    .replace(/(\))([\dx])/g, '$1*$2');   // )x → )*x, )4 → )*4
+      .replace(/√/g, 'sqrt')          // √ → sqrt
+      .replace(/×/g, '*')             // × → *
+      .replace(/e\^/g, 'exp')         // e^ → exp
+      .replace(/\^/g, '**')           // ^ → **
+      .replace(/÷/g, '/')             // ÷ → /
+      .replace(/(\d)([x(])/g, '$1*$2')     // 4x → 4*x, 4( → 4*(
+      .replace(/(\))([\dx])/g, '$1*$2');   // )x → )*x, )4 → )*4
   };
 
   const handleSubmit = async (e) => {
@@ -295,7 +295,7 @@ const Secante = () => {
               </tbody>
             </table>
 
-            
+
           </div>
         )}
       </div>

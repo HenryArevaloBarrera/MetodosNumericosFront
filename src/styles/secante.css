@@ -1,184 +1,185 @@
 body {
-    background: linear-gradient(135deg, #0C0F1F, #191E33); /* Degradado sutil */
-    color: #F3E8D7; /* Color del texto */
-    font-family: 'Segoe UI', 'Inter', sans-serif; /* Fuente moderna */
-  }
-  
-  .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    background-color: transparent; /* Fondo transparente */
-    padding: 20px 0; /* Espacio superior e inferior */
-  }
-  
-  .api-container2 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    max-width: 1200px;
-    min-height: fit-content; /* Se ajusta al contenido */
-    padding: 20px;
-    border-radius: 20px; /* Bordes redondeados */
-    background-color: rgba(25, 30, 51, 0.8); /* Fondo azul oscuro con transparencia */
-    color: #F3E8D7; /* Color del texto */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  }
-  
-  .home-title {
-    font-size: 2rem;
-    color: #F3E8D7; /* Color del texto */
-    margin-bottom: 20px;
-    text-align: center; /* Centrar el texto */
-    font-weight: bold; /* Negrita */
-  }
-  
-  .biseccion-form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-    width: 90%;
-  }
-  
-  .form-group label {
-    font-size: 1rem;
-    color: #F3E8D7; /* Color del texto */
-    margin-bottom: 5px;
-    display: block;
-  }
-  
-  .form-group input {
-    width: 80%;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    border-radius: 10px; /* Bordes redondeados */
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo con transparencia */
-    color: #F3E8D7; /* Color del texto */
-    outline: none;
-  }
-  
-  .form-group input::placeholder {
-    color: #777; /* Color del placeholder */
-  }
-  
-  /* Campos en una sola fila */
-  .input-row {
-    display: flex;
-    gap: 100px; /* Espacio entre los campos */
-    margin-bottom: 15px;
-  }
-  
-  .input-row .form-group {
-    flex: 2; /* Cada campo ocupa el mismo espacio */
-  }
-  
-  /* Campo de ecuación */
-  .equation-group input {
-    width: 100%;
-  }
-  
-  .calculator-buttons {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 columnas */
-    gap: 10px;
-    width: 50%;
-    margin: auto;
-    margin-bottom: 20px;
-  }
-  
-  .calculator-button {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    border-radius: 10px; /* Bordes redondeados */
-    background-color: #191E33; /* Fondo azul oscuro */
-    color: #F3E8D7; /* Color del texto */
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  }
-  
-  .calculator-button:hover {
-    transform: scale(1.05);
-    background-color: #2A304F; /* Cambio de color al pasar el mouse */
-  }
-  
-  .submit-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    border-radius: 10px; /* Bordes redondeados */
-    background-color: #191E33; /* Fondo azul oscuro */
-    color: #F3E8D7; /* Color del texto */
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  }
-  
-  .submit-button:hover {
-    transform: scale(0.9);
-    background-color: #2A304F; /* Cambio de color al pasar el mouse */
-  }
-  
-  .back-button {
-    top: 20px; /* Distancia desde la parte superior */
-    left: 20px; /* Distancia desde la izquierda */
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    border-radius: 10px; /* Bordes redondeados */
-    background-color: #191E33; /* Fondo azul oscuro */
-    color: #F3E8D7; /* Color del texto */
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  }
-  
-  .back-button:hover {
-    transform: scale(1.05);
-    background-color: #2A304F; /* Cambio de color al pasar el mouse */
-  }
-  
-  /* Mensaje de error */
-  .error-message {
-    color: #ff4d4d; /* Color rojo */
-    font-size: 0.9rem;
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  .results-table {
-    margin-top: 20px;
-    width: 100%;
-    overflow-x: auto;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  th, td {
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    text-align: center;
-  }
-  
-  th {
-    background-color: #191E33; /* Fondo azul oscuro */
-    color: #F3E8D7; /* Color del texto */
-  }
-  
-  tr:hover {
-    background-color: rgba(255, 255, 255, 0.05); /* Cambio de color al pasar el mouse */
-  }
+  background: linear-gradient(135deg, #0c0f1f, #191e33); /* Degradado sutil */
+  color: #f3e8d7; /* Color del texto */
+  font-family: 'Segoe UI', 'Inter', sans-serif; /* Fuente moderna */
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background-color: transparent; /* Fondo transparente */
+  padding: 20px 0; /* Espacio superior e inferior */
+}
+
+.api-container2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  min-height: fit-content; /* Se ajusta al contenido */
+  padding: 20px;
+  border-radius: 20px; /* Bordes redondeados */
+  background-color: rgba(25, 30, 51, 0.8); /* Fondo azul oscuro con transparencia */
+  color: #f3e8d7; /* Color del texto */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.home-title {
+  font-size: 2rem;
+  color: #f3e8d7; /* Color del texto */
+  margin-bottom: 20px;
+  text-align: center; /* Centrar el texto */
+  font-weight: bold; /* Negrita */
+}
+
+.biseccion-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  width: 90%;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #f3e8d7; /* Color del texto */
+  margin-bottom: 5px;
+  display: block;
+}
+
+.form-group input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  border-radius: 10px; /* Bordes redondeados */
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo con transparencia */
+  color: #f3e8d7; /* Color del texto */
+  outline: none;
+}
+
+.form-group input::placeholder {
+  color: #777; /* Color del placeholder */
+}
+
+/* Campos en una sola fila */
+.input-row {
+  display: flex;
+  gap: 100px; /* Espacio entre los campos */
+  margin-bottom: 15px;
+}
+
+.input-row .form-group {
+  flex: 2; /* Cada campo ocupa el mismo espacio */
+}
+
+/* Campo de ecuación */
+.equation-group input {
+  width: 100%;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 columnas */
+  gap: 10px;
+  width: 50%;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.calculator-button {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  border-radius: 10px; /* Bordes redondeados */
+  background-color: #191e33; /* Fondo azul oscuro */
+  color: #f3e8d7; /* Color del texto */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.calculator-button:hover {
+  transform: scale(1.05);
+  background-color: #2a304f; /* Cambio de color al pasar el mouse */
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  border-radius: 10px; /* Bordes redondeados */
+  background-color: #191e33; /* Fondo azul oscuro */
+  color: #f3e8d7; /* Color del texto */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.submit-button:hover {
+  transform: scale(0.9);
+  background-color: #2a304f; /* Cambio de color al pasar el mouse */
+}
+
+.back-button {
+  top: 20px; /* Distancia desde la parte superior */
+  left: 20px; /* Distancia desde la izquierda */
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  border-radius: 10px; /* Bordes redondeados */
+  background-color: #191e33; /* Fondo azul oscuro */
+  color: #f3e8d7; /* Color del texto */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.back-button:hover {
+  transform: scale(1.05);
+  background-color: #2a304f; /* Cambio de color al pasar el mouse */
+}
+
+/* Mensaje de error */
+.error-message {
+  color: #ff4d4d; /* Color rojo */
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.results-table {
+  margin-top: 20px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  text-align: center;
+}
+
+th {
+  background-color: #191e33; /* Fondo azul oscuro */
+  color: #f3e8d7; /* Color del texto */
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Cambio de color al pasar el mouse */
+}

@@ -28,8 +28,8 @@ const Biseccion = () => {
   const formatEquationForBackend = (eq) => {
     // Convertir la notación visual a notación computable
     return eq
-    .replace(/√/g, 'sqrt') 
-    .replace(/×/g, '*') 
+      .replace(/√/g, 'sqrt')
+      .replace(/×/g, '*')
       .replace(/e\^/g, 'exp')    // e^ → exp
       .replace(/\^/g, '**')       // ^ → **
       .replace(/÷/g, '/')         // ÷ → /
