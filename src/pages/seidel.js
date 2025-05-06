@@ -306,14 +306,15 @@ const GaussSeidel = () => {
 
           <h3>Vector inicial</h3>
           {initialVector.map((val, index) => (
+
             <div className="form-group" key={index}>
-              <label>{variables[index]}:</label>
+              <label >{variables[index]}:</label>
               <input
                 type="number"
                 value={val}
                 onChange={(e) => handleVectorChange(index, e.target.value)}
                 step="any"
-              />
+                />
             </div>
           ))}
 

@@ -58,6 +58,24 @@ const Home = () => {
       gradient: 'linear-gradient(135deg, #00BCD4, #0097A7)',
       category: 'Sistemas',
     },
+    {
+      title: 'Método del Trapecio',
+      description: 'Método numérico para calcular integrales definidas usando aproximaciones lineales.',
+      path: '/trapecio',
+      icon: '🟰',
+      color: '#FF5722',
+      gradient: 'linear-gradient(135deg, #FF5722, #E64A19)',
+      category: 'Integración',
+    },
+    {
+      title: 'Método de Simpson',
+      description: 'Método numérico para calcular integrales definidas usando aproximaciones cuadráticas.',
+      path: '/simpson',
+      icon: '🍂',
+      color: '#673AB7',
+      gradient: 'linear-gradient(135deg, #673AB7, #512DA8)',
+      category: 'Integración',
+    },
   ];
 
   const categories = [...new Set(methods.map((method) => method.category))];
@@ -74,7 +92,6 @@ const Home = () => {
             <li>Henry Hair Arevalo</li>
           </ul>
         </p>
-
       </div>
 
       <div className="methods-container">
@@ -117,7 +134,6 @@ const Home = () => {
           <li>Calcular integrales definidas</li>
           <li>Resolver ecuaciones diferenciales</li>
         </ul>
-
       </div>
     </div>
   );

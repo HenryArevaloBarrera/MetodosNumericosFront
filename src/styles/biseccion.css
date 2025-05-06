@@ -54,7 +54,7 @@ body {
   font-size: 1.1rem;
   color: #f3e8d7;
   margin-bottom: 8px;
-  display: block;
+  position: relative;
   font-weight: 500;
 }
 
