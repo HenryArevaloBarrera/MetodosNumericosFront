@@ -41,6 +41,12 @@ const Navbar = () => {
         <Link to="/simpson" className={`nav-link ${isActive('/simpson') ? 'active' : ''}`}>
           Simpson
         </Link>
+        <Link to="/euler" className={`nav-link ${isActive('/euler') ? 'active' : ''}`}>
+          Euler
+        </Link>
+        <Link to="/edpe" className={`nav-link ${isActive('/edpe') ? 'active' : ''}`}>
+          EDPE
+        </Link>
       </div>
     </nav>
   );

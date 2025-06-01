@@ -11,6 +11,10 @@ const NewtonRaphson = () => {
   const [error, setError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
+  const [graficoX, setGraficoX] = useState([]);
+  const [graficoY, setGraficoY] = useState([]);
+  const [xHist, setXHist] = useState([]);
+  const [fxHist, setFxHist] = useState([]);
 
   const areParenthesesBalanced = (str) => {
     const stack = [];
@@ -61,7 +65,23 @@ const NewtonRaphson = () => {
         throw new Error(data.error || 'Error desconocido en el servidor');
       }
 
-      setResults(data);
+      // Soportar ambas respuestas: solo tabla (antiguo) o objeto con datos de gráfico (nuevo)
+      if (Array.isArray(data)) {
+        setResults(data);
+        setGraficoX([]);
+        setGraficoY([]);
+        setXHist([]);
+        setFxHist([]);
+      } else if (data.tabla && data.grafico_x && data.grafico_y && data.x_hist && data.fx_hist) {
+        setResults(data.tabla);
+        setGraficoX(data.grafico_x);
+        setGraficoY(data.grafico_y);
+        setXHist(data.x_hist);
+        setFxHist(data.fx_hist);
+      } else {
+        throw new Error('Formato de respuesta inválido del servidor');
+      }
+
       setErrorMessage('');
     } catch (error) {
       console.error('Error en la solicitud:', error);
@@ -84,47 +104,39 @@ const NewtonRaphson = () => {
     setErrorMessage('');
   };
 
+  // Gráfico con los datos del backend (grafico_x, grafico_y, x_hist, fx_hist)
   const plotData = () => {
-    if (results.length === 0) return null;
-
-    const xValues = results.map((row) => row.xi);
-    const yValues = results.map((row) => row.fxi);
-
-    const xRange = Array.from({ length: 100 }, (_, i) => x0 - 5 + (i * 10) / 100);
-    const yRange = xRange.map((x) => {
-      try {
-        const expr = equation.replace(/x/g, `(${x})`);
-        return eval(expr);
-      } catch (e) {
-        return NaN;
-      }
-    });
+    if (!graficoX.length || !graficoY.length) return null;
 
     return (
       <Plot
         data={[
           {
-            x: xRange,
-            y: yRange,
+            x: graficoX,
+            y: graficoY,
             type: 'scatter',
             mode: 'lines',
-            name: 'Ecuación',
+            name: 'f(x)',
             line: { color: 'blue' },
           },
           {
-            x: xValues,
-            y: yValues,
+            x: xHist,
+            y: fxHist,
             type: 'scatter',
-            mode: 'markers',
-            name: 'Puntos (xi, f(xi))',
+            mode: 'markers+text',
+            name: 'Iteraciones',
             marker: { color: 'red', size: 10 },
-          },
+            text: xHist.map((v, i) => `Iter ${i}`),
+            textposition: 'top center'
+          }
         ]}
         layout={{
-          title: 'Gráfica de la ecuación y puntos de iteración',
+          title: 'Gráfica de f(x) y puntos de iteración',
           xaxis: { title: 'x' },
           yaxis: { title: 'f(x)' },
           showlegend: true,
+          width: 600,
+          height: 400
         }}
         style={{ width: '100%', height: '400px' }}
       />
@@ -276,8 +288,11 @@ const NewtonRaphson = () => {
                 ))}
               </tbody>
             </table>
-
-          
+            {/* Gráfica de la ecuación y puntos de iteración */}
+            <div className="plot-container">
+              <h2>Gráfica de la ecuación y puntos de iteración</h2>
+              {plotData()}
+            </div>
           </div>
         )}
       </div>

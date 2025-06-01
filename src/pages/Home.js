@@ -4,6 +4,7 @@ import '../styles/Home.css';
 
 const Home = () => {
   const methods = [
+    // Raíces
     {
       title: 'Método de Bisección',
       description: 'Método numérico para encontrar raíces de una función en un intervalo cerrado.',
@@ -40,6 +41,7 @@ const Home = () => {
       gradient: 'linear-gradient(135deg, #9C27B0, #7B1FA2)',
       category: 'Raíces',
     },
+    // Sistemas
     {
       title: 'Método de Jacobi',
       description: 'Método iterativo para resolver sistemas de ecuaciones lineales.',
@@ -58,6 +60,7 @@ const Home = () => {
       gradient: 'linear-gradient(135deg, #00BCD4, #0097A7)',
       category: 'Sistemas',
     },
+    // Integración
     {
       title: 'Método del Trapecio',
       description: 'Método numérico para calcular integrales definidas usando aproximaciones lineales.',
@@ -75,6 +78,25 @@ const Home = () => {
       color: '#673AB7',
       gradient: 'linear-gradient(135deg, #673AB7, #512DA8)',
       category: 'Integración',
+    },
+    // Ecuaciones diferenciales
+    {
+      title: 'Método de Euler',
+      description: 'Método numérico para aproximar soluciones de ecuaciones diferenciales ordinarias.',
+      path: '/euler',
+      icon: '📊',
+      color: '#2596be',
+      gradient: 'linear-gradient(135deg, #2596be, #2964be)',
+      category: 'Ecuaciones diferenciales',
+    },
+    {
+      title: 'EDP Elíptica (placa de calor)',
+      description: 'Resuelve ecuaciones diferenciales parciales elípticas usando diferencias finitas.',
+      path: '/edpe',
+      icon: '🔥',
+      color: '#e36209',
+      gradient: 'linear-gradient(135deg, #e36209, #e39b09)',
+      category: 'Ecuaciones diferenciales',
     },
   ];
 

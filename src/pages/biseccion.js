@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Plot from 'react-plotly.js';
 import '../styles/biseccion.css';
 
 const Biseccion = () => {
@@ -11,6 +12,8 @@ const Biseccion = () => {
   const [tolError, setTolError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
+  const [graficoX, setGraficoX] = useState([]);
+  const [graficoY, setGraficoY] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const areParenthesesBalanced = (str) => {
@@ -70,16 +73,27 @@ const Biseccion = () => {
         throw new Error(data.error || 'Error en el servidor');
       }
 
-      if (!Array.isArray(data)) {
+      // Ahora el backend puede devolver tabla, grafico_x, grafico_y
+      if (Array.isArray(data)) {
+        // Compatibilidad con backend antiguo (solo tabla)
+        setResults(data);
+        setGraficoX([]);
+        setGraficoY([]);
+      } else if (data.tabla && data.grafico_x && data.grafico_y) {
+        setResults(data.tabla);
+        setGraficoX(data.grafico_x);
+        setGraficoY(data.grafico_y);
+      } else {
         throw new Error('Formato de respuesta inválido del servidor');
       }
 
-      setResults(data);
       setErrorMessage('');
     } catch (error) {
       console.error('Error en la solicitud:', error);
       setErrorMessage(error.message);
       setResults([]);
+      setGraficoX([]);
+      setGraficoY([]);
     } finally {
       setIsLoading(false);
     }
@@ -108,6 +122,50 @@ const Biseccion = () => {
   const safeExponential = (value, decimals = 4) => {
     if (typeof value !== 'number' || isNaN(value)) return '-';
     return value.toExponential(decimals);
+  };
+
+  // Sección del gráfico
+  const renderPlot = () => {
+    if (!graficoX.length || !graficoY.length) return null;
+    // Extraer los puntos xm de las iteraciones
+    const xms = results.map((row) => row.xm);
+    const fxms = results.map((row) => row.fxm);
+
+    return (
+      <div className="biseccion-plot-container">
+        <h2>Gráfico de f(x) en [xo, xu]</h2>
+        <Plot
+          data={[
+            {
+              x: graficoX,
+              y: graficoY,
+              type: 'scatter',
+              mode: 'lines',
+              name: 'f(x)',
+              line: { color: 'blue' }
+            },
+            {
+              x: xms,
+              y: fxms,
+              type: 'scatter',
+              mode: 'markers+text',
+              name: 'Aproximaciones xm',
+              marker: { color: 'red', size: 8 },
+              text: xms.map((v, i) => `Iter ${i + 1}`),
+              textposition: 'top center'
+            }
+          ]}
+          layout={{
+            xaxis: { title: 'x' },
+            yaxis: { title: 'f(x)' },
+            title: 'Visualización del Método de Bisección',
+            width: 600,
+            height: 400,
+            legend: { x: 1, y: 1 }
+          }}
+        />
+      </div>
+    );
   };
 
   return (
@@ -238,6 +296,8 @@ const Biseccion = () => {
         </form>
 
         {isLoading && <div className="loading-indicator">Procesando...</div>}
+
+        {graficoX.length > 0 && graficoY.length > 0 && renderPlot()}
 
         {results.length > 0 && (
           <div className="results-container">

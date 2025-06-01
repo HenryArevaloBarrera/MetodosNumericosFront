@@ -13,6 +13,11 @@ const PuntoFijo = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [results, setResults] = useState([]);
   const [activeField, setActiveField] = useState('equation'); // Estado para controlar el campo activo
+  // Nuevos estados para los datos de la gráfica
+  const [graficoX, setGraficoX] = useState([]);
+  const [graficoY, setGraficoY] = useState([]);
+  const [xHist, setXHist] = useState([]);
+  const [fxHist, setFxHist] = useState([]);
 
   const areParenthesesBalanced = (str) => {
     const stack = [];
@@ -60,19 +65,34 @@ const PuntoFijo = () => {
         throw new Error(data.error || 'Error desconocido en el servidor');
       }
 
-      // Verificar si hay NaN en los resultados
-      const hasNaN = data.some((row) => isNaN(row.error) || isNaN(row.fxi));
-      if (hasNaN) {
-        setErrorMessage('El método no converge. Intenta con otra función de iteración o valor inicial.');
-        setResults([]);
-      } else {
-        setResults(data);
+      // Si la respuesta es la nueva (con grafico_x, grafico_y, x_hist, fx_hist)
+      if (data.tabla && data.grafico_x && data.grafico_y && data.x_hist && data.fx_hist) {
+        setResults(data.tabla);
+        setGraficoX(data.grafico_x);
+        setGraficoY(data.grafico_y);
+        setXHist(data.x_hist);
+        setFxHist(data.fx_hist);
         setErrorMessage('');
+      } 
+      // Compatibilidad con respuesta antigua (solo tabla)
+      else if (Array.isArray(data)) {
+        setResults(data);
+        setGraficoX([]);
+        setGraficoY([]);
+        setXHist([]);
+        setFxHist([]);
+        setErrorMessage('');
+      } else {
+        throw new Error('Formato de respuesta inválido del servidor');
       }
     } catch (error) {
       console.error('Error en la solicitud:', error);
       setErrorMessage('Error al procesar la solicitud. Verifica los datos ingresados.');
       setResults([]);
+      setGraficoX([]);
+      setGraficoY([]);
+      setXHist([]);
+      setFxHist([]);
     }
   };
 
@@ -103,51 +123,39 @@ const PuntoFijo = () => {
     setErrorMessage('');
   };
 
-  // Función para graficar la ecuación y los puntos de la tabla
+  // Gráfico con los datos del backend (grafico_x, grafico_y, x_hist, fx_hist)
   const plotData = () => {
-    if (results.length === 0) return null;
-
-    // Extraer los valores de x_actual y x_siguiente de los resultados
-    const xValues = results.map((row) => row.x_actual);
-    const yValues = results.map((row) => row.x_siguiente);
-
-    // Crear un rango de valores para graficar la ecuación
-    const xRange = Array.from({ length: 100 }, (_, i) => x0 + (i * (x0 + 5)) / 100);
-    const yRange = xRange.map((x) => {
-      try {
-        // Evaluar la ecuación en el rango de valores
-        const expr = equation.replace(/x/g, `(${x})`);
-        return eval(expr); // ¡Cuidado! Usar eval puede ser peligroso en aplicaciones reales
-      } catch (e) {
-        return NaN;
-      }
-    });
+    if (!graficoX.length || !graficoY.length) return null;
 
     return (
       <Plot
         data={[
           {
-            x: xRange,
-            y: yRange,
+            x: graficoX,
+            y: graficoY,
             type: 'scatter',
             mode: 'lines',
-            name: 'Ecuación',
+            name: 'f(x)',
             line: { color: 'blue' },
           },
           {
-            x: xValues,
-            y: yValues,
+            x: xHist,
+            y: fxHist,
             type: 'scatter',
-            mode: 'markers',
-            name: 'Puntos (x_actual, x_siguiente)',
+            mode: 'markers+text',
+            name: 'Iteraciones',
             marker: { color: 'red', size: 10 },
-          },
+            text: xHist.map((v, i) => `Iter ${i}`),
+            textposition: 'top center'
+          }
         ]}
         layout={{
-          title: 'Gráfica de la ecuación y puntos de iteración',
+          title: 'Gráfica de f(x) y puntos de iteración',
           xaxis: { title: 'x' },
           yaxis: { title: 'f(x)' },
           showlegend: true,
+          width: 600,
+          height: 400
         }}
         style={{ width: '100%', height: '400px' }}
       />
@@ -166,8 +174,8 @@ const PuntoFijo = () => {
               id="equation"
               value={equation}
               placeholder="Ingresa la ecuación"
-              onFocus={() => setActiveField('equation')} // Cambiar el campo activo al enfocar
-              readOnly // Bloquear edición manual
+              onFocus={() => setActiveField('equation')}
+              readOnly
             />
           </div>
 
@@ -178,8 +186,8 @@ const PuntoFijo = () => {
               id="transformada"
               value={transformada}
               placeholder="Ingresa la función de iteración"
-              onFocus={() => setActiveField('transformada')} // Cambiar el campo activo al enfocar
-              readOnly // Bloquear edición manual
+              onFocus={() => setActiveField('transformada')}
+              readOnly
               required
             />
           </div>
