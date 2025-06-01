@@ -107,13 +107,15 @@ const Home = () => {
       <div className="hero-section">
         <h1 className="hero-title">Métodos Numéricos</h1>
         <p className="hero-subtitle">
-          Calculadora interactiva para resolver problemas matemáticos usando métodos numéricos
+          Calculadora interactiva para resolver problemas matemáticos usando métodos numéricos.
+        </p>
+        <div className="integrantes-box">
+          <h4>Integrantes:</h4>
           <ul>
-            <h4> Integrantes:</h4>
             <li>Camilo Alejandro Colón</li>
             <li>Henry Hair Arevalo</li>
           </ul>
-        </p>
+        </div>
       </div>
 
       <div className="methods-container">
@@ -124,7 +126,7 @@ const Home = () => {
               {methods
                 .filter((method) => method.category === category)
                 .map((method, index) => (
-                  <Link to={method.path} key={index} className="method-card">
+                  <Link to={method.path} key={index} className="method-card" style={{ background: method.gradient }}>
                     <div className="method-card-content">
                       <div className="method-icon" style={{ backgroundColor: method.color }}>
                         {method.icon}
